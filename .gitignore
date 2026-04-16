@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+
+# Data and vector DB
+data/raw/
+data/processed/
+
+# Frontend
+frontend/node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
