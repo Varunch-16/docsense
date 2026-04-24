@@ -1,4 +1,9 @@
 📄 DocSense: Semantic Document QA using RAG
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![React](https://img.shields.io/badge/React-Frontend-blue)
+![RAG](https://img.shields.io/badge/AI-RAG-orange)
+![License](https://img.shields.io/badge/Status-Student%20Project-lightgrey)
 📌 Overview
 DocSense is an AI-powered document assistant that allows users to upload a PDF and ask questions about it in a chat-like interface.
 
