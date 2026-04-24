@@ -83,10 +83,18 @@ Wait for processing
 Ask questions in the chat
 View answers with source references
 
-📌 Example Questions
-What are the three paradigms of RAG?
-What is the difference between Naive RAG and Modular RAG?
-What criteria are used for judging good AI research?
+## 📂 Sample PDFs for Testing
+
+You can use the following sample files to test the system:
+
+- 📄 [RAG Sample Paper](sample_data/rag_sample.pdf)
+- 📄 [AI Research Paper](sample_data/ai_research_sample.pdf)
+
+### Try these example questions:
+
+- What are the three paradigms of RAG?
+- What criteria are used for judging good AI research?
+- What is the difference between Naive RAG and Modular RAG?
 
 Out-of-scope example:
 What is the weather today? → System will not answer 
