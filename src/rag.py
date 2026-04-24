@@ -1,15 +1,13 @@
 import os
-from openai import OpenAI
+import requests
 
 from src.retrieve import retrieve_top_k
 
 MODEL_NAME = "gpt-4o-mini"
+OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 
 
-def format_context(results) -> tuple[str, list[str]]:
-    """
-    Convert retrieved results into prompt context and a list of source labels.
-    """
+def format_context(results):
     documents = results["documents"][0]
     metadatas = results["metadatas"][0]
 
@@ -18,40 +16,72 @@ def format_context(results) -> tuple[str, list[str]]:
 
     for i, (doc, meta) in enumerate(zip(documents, metadatas), start=1):
         content_type = meta.get("content_type", "text")
-        source_label = f"{meta['source']} | page {meta['page']} | {content_type} | chunk {meta['chunk_id']}"
+        source_label = (
+            f"{meta['source']} | page {meta['page']} | "
+            f"{content_type} | chunk {meta['chunk_id']}"
+        )
 
         context_blocks.append(f"[Source {i}] {source_label}\n{doc}")
         source_labels.append(source_label)
 
-    context = "\n\n".join(context_blocks)
-    return context, source_labels
+    return "\n\n".join(context_blocks), source_labels
 
 
-def deduplicate_sources(source_labels: list[str], max_sources: int = 3) -> list[str]:
-    """
-    Keep unique sources in original order and limit how many are shown.
-    """
-    unique_sources = []
+def deduplicate_sources(source_labels, max_sources=3):
+    unique = []
     seen = set()
 
     for src in source_labels:
         if src not in seen:
-            unique_sources.append(src)
+            unique.append(src)
             seen.add(src)
 
-    return unique_sources[:max_sources]
+    return unique[:max_sources]
 
 
-def generate_answer(question: str, k: int = 5) -> str:
-    """
-    Retrieve relevant chunks and generate a grounded answer using OpenAI.
-    """
+def call_openai(prompt: str) -> str:
     api_key = os.getenv("OPENAI_API_KEY")
+
     if not api_key:
         raise EnvironmentError(
             "OPENAI_API_KEY is not set. Please set it in your terminal before running."
         )
 
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+
+    payload = {
+        "model": MODEL_NAME,
+        "messages": [
+            {
+                "role": "system",
+                "content": "You answer questions strictly from provided document context.",
+            },
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
+        "temperature": 0.2,
+    }
+
+    response = requests.post(
+        OPENAI_URL,
+        headers=headers,
+        json=payload,
+        timeout=60,
+    )
+
+    if response.status_code != 200:
+        raise RuntimeError(f"OpenAI API error: {response.status_code} - {response.text}")
+
+    data = response.json()
+    return data["choices"][0]["message"]["content"].strip()
+
+
+def generate_answer(question: str, k: int = 5) -> str:
     results = retrieve_top_k(question, k=k)
     context, source_labels = format_context(results)
 
@@ -73,24 +103,8 @@ Sources:
 {context}
 """
 
-    client = OpenAI(api_key=api_key)
+    answer_text = call_openai(prompt)
 
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=[
-            {
-                "role": "system",
-                "content": "You answer questions strictly from provided document context."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.2
-    )
-
-    answer_text = response.choices[0].message.content.strip()
     final_sources = deduplicate_sources(source_labels, max_sources=3)
     formatted_sources = "\n".join(f"- {src}" for src in final_sources)
 
