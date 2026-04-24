@@ -88,8 +88,8 @@ What is the weather today? → System will not answer
 (correct behavior)
 
 📎 Project Report & Presentation
-📄 Final Report: [Download Report](docs/project_Report.pdf)  
-📊 Presentation Slides: [View Slides](docs/Project_PPT.pptx)
+📄 Final Report: [Download Report](docs/project_report.pdf)  
+📊 Presentation Slides: [View Slides](docs/project_PPT.pptx)
 
 🧠 Tech Stack
 FastAPI (Backend)
