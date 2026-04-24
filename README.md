@@ -25,21 +25,6 @@ Relevant chunks are retrieved using semantic search
 OpenAI generates an answer based on retrieved content
 The system returns the answer with source references
 
-🗂️ Project Structure
-docsense/
-│
-├── app/                # FastAPI backend (API endpoints)
-├── src/                # Core RAG pipeline
-│   ├── ingest.py
-│   ├── chunking.py
-│   ├── vector_store.py
-│   ├── retrieve.py
-│   └── rag.py
-│
-├── frontend/           # React UI (Vite)
-│
-├── requirements.txt
-├── README.md
 
 🛠️ Requirements
 Make sure you have:
@@ -103,8 +88,8 @@ What is the weather today? → System will not answer
 (correct behavior)
 
 📎 Project Report & Presentation
-📄 Final Report: (Add your file here after upload)
-📊 Presentation Slides: (Add your PPT here)
+📄 Final Report: [Download Report](docs/project_Report.pdf)  
+📊 Presentation Slides: [View Slides](docs/Project_PPT.pptx)
 
 🧠 Tech Stack
 FastAPI (Backend)
